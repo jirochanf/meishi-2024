@@ -1,10 +1,10 @@
-<!--自己紹介名刺動画-->
+<!--MindAR ターゲット認識後　ボタン押下でwebページへ移行-->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MindAR Image Tracking</title>
+  <title>MindAR Webページ表示</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
@@ -16,74 +16,49 @@
 <body>
 
   <a-scene
-    mindar-image="imageTargetSrc: https://jirochanf.github.io/meishi-2024/etc/targets_2024ura.mind;"
+    mindar-image="imageTargetSrc: ./etc/targets_2024ura;"
     color-space="sRGB"
-    renderer="colorManagement: true"
+    renderer="colorManagement: true, physicallyCorrectLights"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
-    <!-- 動画 -->
-    <a-assets>
-      <video
-        id="myVideo"
-        src="./etc/myintro.mp4"
-        preload="auto"
-        loop
-        muted
-        playsinline
-        webkit-playsinline
-        crossorigin="anonymous">
-      </video>
-    </a-assets>
-
-    <!-- カメラ -->
     <a-camera
       position="0 0 0"
       look-controls="enabled: false">
     </a-camera>
 
-    <!-- 画像認識 -->
-    <a-entity mindar-image-target="targetIndex: 0">
-
-      <a-plane
-        position="0 0.2 0"
-        rotation="20 0 0"
-        width="1.4"
-        height="1"
-        material="shader: flat; src: #myVideo">
-      </a-plane>
-
+    <!-- ターゲット画像 -->
+    <a-entity
+      id="target"
+      mindar-image-target="targetIndex: 0">
     </a-entity>
 
   </a-scene>
 
   <script>
-    const video = document.querySelector("#myVideo");
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const target = document.querySelector(
-      "[mindar-image-target]"
-    );
+      // ターゲットを取得
+      const target = document.querySelector("#target");
 
-    // 画像を認識したとき
-    target.addEventListener("targetFound", () => {
+      // 二重実行防止
+      let redirected = false;
 
-      console.log("画像を認識しました");
+      // ターゲット画像を認識したとき
+      target.addEventListener("targetFound", function() {
 
-      video.play().catch(error => {
-        console.log("動画再生エラー:", error);
+        if (redirected) return;
+
+        redirected = true;
+
+        console.log("ターゲットを認識しました");
+
+        // Webページへ移動
+        window.location.href = "https://canva.link/z1ddxt4ihuwxykh";
+
       });
 
     });
-
-    // 画像を見失ったとき
-    target.addEventListener("targetLost", () => {
-
-      console.log("画像を見失いました");
-
-      video.pause();
-
-    });
-
   </script>
 
 </body>
