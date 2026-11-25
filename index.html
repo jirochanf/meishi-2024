@@ -1,37 +1,60 @@
-<!--MindAR ターゲット認識後　ボタン押下でwebページへ移行-->
+<!--chatgptが作成-->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MindAR ターゲット認識でWebページリンク</title>
+  <title>AR名刺 自己紹介</title>
 
+  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+  <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    #linkButton {
+
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* プロフィールボタン */
+    #profileButton {
       display: none;
+
       position: fixed;
+      z-index: 9999;
+
       bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 9999;
 
-      padding: 16px 30px;
+      padding: 15px 30px;
+
       font-size: 18px;
+      font-weight: bold;
+
       color: white;
       background: #007bff;
+
       border: none;
-      border-radius: 10px;
+      border-radius: 30px;
+
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+
   </style>
 </head>
 
 <body>
 
-  <button id="linkButton">自己紹介ページを開く</button>
+  <!-- プロフィールボタン -->
+  <button id="profileButton">
+    自己紹介を見る
+  </button>
+
 
   <a-scene
     mindar-image="imageTargetSrc: ./etc/targets_2024ura.mind;"
@@ -40,35 +63,101 @@
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
-    <a-camera position="0 0 0"
-              look-controls="enabled: false">
+    <!-- 動画 -->
+    <a-assets>
+
+      <video
+        id="myVideo"
+        src="./etc/myintro.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline>
+      </video>
+
+    </a-assets>
+
+
+    <!-- カメラ -->
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false">
     </a-camera>
 
+
+    <!-- ターゲット画像 -->
     <a-entity
       id="target"
       mindar-image-target="targetIndex: 0">
+
+      <!-- ターゲーション画像上の動画 -->
+      <a-video
+        id="videoPlane"
+        src="#myVideo"
+        width="1"
+        height="0.5625"
+        position="0 0 0.01"
+        material="shader: flat">
+      </a-video>
+
     </a-entity>
 
   </a-scene>
 
+
   <script>
+
     const target = document.querySelector("#target");
-    const button = document.querySelector("#linkButton");
 
-    // 認識したらボタン表示
+    const video = document.querySelector("#myVideo");
+
+    const button = document.querySelector("#profileButton");
+
+
+    // ターゲット画像を認識したとき
     target.addEventListener("targetFound", function () {
+
+      console.log("名刺を認識しました");
+
+      // 動画を最初から再生
+      video.currentTime = 0;
+
+      video.play().catch(function(error) {
+        console.log("動画再生エラー:", error);
+      });
+
+      // プロフィールボタン表示
       button.style.display = "block";
+
     });
 
-    // ターゲットを見失ったらボタン非表示
+
+    // ターゲット画像を見失ったとき
     target.addEventListener("targetLost", function () {
+
+      console.log("名刺を見失いました");
+
+      // 動画停止
+      video.pause();
+
+      video.currentTime = 0;
+
+      // ボタン非表示
       button.style.display = "none";
+
     });
 
-    // ボタンを押したらWebページへ
+
+    // プロフィールボタンを押したとき
     button.addEventListener("click", function () {
-      window.location.href = "https://canva.link/z1ddxt4ihuwxykh";
+
+      // プロフィールページへ移動
+      window.location.href =
+        "https://2024meishi.my.canva.site/dahb4ptae7m";
+
     });
+
   </script>
 
 </body>
