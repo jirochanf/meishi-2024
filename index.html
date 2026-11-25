@@ -4,30 +4,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MindAR Webページ表示</title>
 
-  <!-- A-Frame -->
+  <title>MindAR ターゲット認識でWebページリンク</title>
+
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-
-  <!-- MindAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    #linkButton {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+
+      padding: 16px 30px;
+      font-size: 18px;
+      color: white;
+      background: #007bff;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 
 <body>
 
+  <button id="linkButton">Webページを開く</button>
+
   <a-scene
     mindar-image="imageTargetSrc: ./etc/targets_2024ura.mind;"
     color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights"
+    renderer="colorManagement: true"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
 
-    <a-camera
-      position="0 0 0"
-      look-controls="enabled: false">
+    <a-camera position="0 0 0"
+              look-controls="enabled: false">
     </a-camera>
 
-    <!-- ターゲット画像 -->
     <a-entity
       id="target"
       mindar-image-target="targetIndex: 0">
@@ -36,28 +52,22 @@
   </a-scene>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    const target = document.querySelector("#target");
+    const button = document.querySelector("#linkButton");
 
-      // ターゲットを取得
-      const target = document.querySelector("#target");
+    // 認識したらボタン表示
+    target.addEventListener("targetFound", function () {
+      button.style.display = "block";
+    });
 
-      // 二重実行防止
-      let redirected = false;
+    // ターゲットを見失ったらボタン非表示
+    target.addEventListener("targetLost", function () {
+      button.style.display = "none";
+    });
 
-      // ターゲット画像を認識したとき
-      target.addEventListener("targetFound", function() {
-
-        if (redirected) return;
-
-        redirected = true;
-
-        console.log("ターゲットを認識しました");
-
-        // Webページへ移動
-        window.location.href = "https://canva.link/z1ddxt4ihuwxykh";
-
-      });
-
+    // ボタンを押したらWebページへ
+    button.addEventListener("click", function () {
+      window.location.href = "https://canva.link/z1ddxt4ihuwxykh";
     });
   </script>
 
